@@ -1,0 +1,316 @@
+version: '2'
+
+networks:
+  # network name
+  authenticator:
+
+services:
+  orderer.authenticator.com:
+    image: hyperledger/fabric-orderer:x86_64-1.0.0
+    container_name: orderer.authenticator.com
+    environment:
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - GRPC_TRACE=all=true
+      - GRPC_VERBOSITY=debug
+    volumes:
+      - ./orderer/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - ./crypto-config/ordererOrganizations/authenticator.com/orderers/orderer.authenticator.com/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/authenticator.com/orderers/orderer.authenticator.com/tls:/var/hyperledger/orderer/tls
+    command: orderer
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    ports:
+      - 7050:7050
+    networks:
+      - authenticator
+
+  peer0.org1.authenticator.com:
+    container_name: peer0.org1.authenticator.com
+    extends:
+      file: ./peer.yaml
+      service: peer
+    environment:
+      - CORE_PEER_ID=peer0.org1.authenticator.com
+      - CORE_PEER_ADDRESS=peer0.org1.authenticator.com:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.authenticator.com:7051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.org1.authenticator.com:7052
+      - CORE_CHAINCODE_STARTUPTIMEOUT=120s
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.authenticator.com/peers/peer0.org1.authenticator.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.authenticator.com/peers/peer0.org1.authenticator.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.authenticator.com/peers/peer0.org1.authenticator.com/tls/ca.crt
+      - GRPC_TRACE=all=true
+      - GRPC_VERBOSITY=debug
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.authenticator.com/peers/peer0.org1.authenticator.com/msp:/etc/hyperledger/msp/peer
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    ports:
+      - 8051:7051
+      - 8053:7053
+    depends_on:
+      - orderer.authenticator.com
+    networks:
+      - authenticator
+
+  peer1.org1.authenticator.com:
+    container_name: peer1.org1.authenticator.com
+    extends:
+      file: ./peer.yaml
+      service: peer
+    environment:
+      - CORE_PEER_ID=peer1.org1.authenticator.com
+      - CORE_PEER_ADDRESS=peer1.org1.authenticator.com:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.authenticator.com:7051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer1.org1.authenticator.com:7052
+      - CORE_CHAINCODE_STARTUPTIMEOUT=120s
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.authenticator.com/peers/peer1.org1.authenticator.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.authenticator.com/peers/peer1.org1.authenticator.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.authenticator.com/peers/peer1.org1.authenticator.com/tls/ca.crt
+      - GRPC_TRACE=all=true
+      - GRPC_VERBOSITY=debug
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.authenticator.com/peers/peer1.org1.authenticator.com/msp:/etc/hyperledger/msp/peer
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    ports:
+      - 9051:7051
+      - 9053:7053
+    depends_on:
+      - orderer.authenticator.com
+    networks:
+      - authenticator
+
+  peer0.org2.authenticator.com:
+    container_name: peer0.org2.authenticator.com
+    extends:
+      file: ./peer.yaml
+      service: peer
+    environment:
+      - CORE_PEER_ID=peer0.org2.authenticator.com
+      - CORE_PEER_ADDRESS=peer0.org2.authenticator.com:7051
+      - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.authenticator.com:7051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.org2.authenticator.com:7052
+      - CORE_CHAINCODE_STARTUPTIMEOUT=120s
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.authenticator.com/peers/peer0.org2.authenticator.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.authenticator.com/peers/peer0.org2.authenticator.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.authenticator.com/peers/peer0.org2.authenticator.com/tls/ca.crt
+      - GRPC_TRACE=all=true
+      - GRPC_VERBOSITY=debug
+    volumes:
+      - ./crypto-config/peerOrganizations/org2.authenticator.com/peers/peer0.org2.authenticator.com/msp:/etc/hyperledger/msp/peer
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    ports:
+      - 10051:7051
+      - 10053:7053
+    depends_on:
+      - orderer.authenticator.com
+    networks:
+      - authenticator
+
+  peer1.org2.authenticator.com:
+    container_name: peer1.org2.authenticator.com
+    extends:
+      file: ./peer.yaml
+      service: peer
+    environment:
+      - CORE_PEER_ID=peer1.org2.authenticator.com
+      - CORE_PEER_ADDRESS=peer1.org2.authenticator.com:7051
+      - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.authenticator.com:7051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer1.org2.authenticator.com:7052
+      - CORE_CHAINCODE_STARTUPTIMEOUT=120s
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.authenticator.com/peers/peer1.org2.authenticator.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.authenticator.com/peers/peer1.org2.authenticator.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.authenticator.com/peers/peer1.org2.authenticator.com/tls/ca.crt
+      - GRPC_TRACE=all=true
+      - GRPC_VERBOSITY=debug
+    volumes:
+      - ./crypto-config/peerOrganizations/org2.authenticator.com/peers/peer1.org2.authenticator.com/msp:/etc/hyperledger/msp/peer
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    ports:
+      - 11051:7051
+      - 11053:7053
+    depends_on:
+      - orderer.authenticator.com
+    networks:
+      - authenticator
+
+  peer0.Auth.authenticator.com:
+    container_name: peer0.Auth.authenticator.com
+    extends:
+      file: ./peer.yaml
+      service: peer
+    environment:
+      - CORE_PEER_ID=peer0.Auth.authenticator.com
+      - CORE_PEER_ADDRESS=peer0.Auth.authenticator.com:7051
+      - CORE_PEER_LOCALMSPID=AuthMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.Auth.authenticator.com:7051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.Auth.authenticator.com:7052
+      - CORE_CHAINCODE_STARTUPTIMEOUT=120s
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Auth.authenticator.com/peers/peer0.Auth.authenticator.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Auth.authenticator.com/peers/peer0.Auth.authenticator.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Auth.authenticator.com/peers/peer0.Auth.authenticator.com/tls/ca.crt
+      - GRPC_TRACE=all=true
+      - GRPC_VERBOSITY=debug
+    volumes:
+      - ./crypto-config/peerOrganizations/Auth.authenticator.com/peers/peer0.Auth.authenticator.com/msp:/etc/hyperledger/msp/peer
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    ports:
+      - 12051:7051
+      - 12053:7053
+    depends_on:
+      - orderer.authenticator.com
+    networks:
+      - authenticator
+
+  cli0.Org1:
+    extends:
+      file: ./cli.yaml
+      service: cli
+    container_name: cli0.Org1
+    environment:
+      - CORE_PEER_ID=cli0.org1.authenticator.com
+      - CORE_PEER_ADDRESS=peer0.org1.authenticator.com:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.authenticator.com/msp
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.org1.authenticator.com:7052
+      - CORE_CHAINCODE_STARTUPTIMEOUT=120s
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.authenticator.com/peers/peer0.org1.authenticator.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.authenticator.com/peers/peer0.org1.authenticator.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.authenticator.com/peers/peer0.org1.authenticator.com/tls/ca.crt
+      - GRPC_TRACE=all=true
+      - GRPC_VERBOSITY=debug
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.authenticator.com:/etc/hyperledger/msp
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    depends_on:
+      - orderer.authenticator.com
+      - peer0.org1.authenticator.com
+    networks:
+      - authenticator
+
+  cli1.Org1:
+    extends:
+      file: ./cli.yaml
+      service: cli
+    container_name: cli1.Org1
+    environment:
+      - CORE_PEER_ID=cli1.org1.authenticator.com
+      - CORE_PEER_ADDRESS=peer1.org1.authenticator.com:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.authenticator.com/msp
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer1.org1.authenticator.com:7052
+      - CORE_CHAINCODE_STARTUPTIMEOUT=120s
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.authenticator.com/peers/peer1.org1.authenticator.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.authenticator.com/peers/peer1.org1.authenticator.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.authenticator.com/peers/peer1.org1.authenticator.com/tls/ca.crt
+      - GRPC_TRACE=all=true
+      - GRPC_VERBOSITY=debug
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.authenticator.com:/etc/hyperledger/msp
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    depends_on:
+      - orderer.authenticator.com
+      - peer1.org1.authenticator.com
+    networks:
+      - authenticator
+
+  cli0.Org2:
+    extends:
+      file: ./cli.yaml
+      service: cli
+    container_name: cli0.Org2
+    environment:
+      - CORE_PEER_ID=cli0.org2.authenticator.com
+      - CORE_PEER_ADDRESS=peer0.org2.authenticator.com:7051
+      - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org2.authenticator.com/msp
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.org2.authenticator.com:7052
+      - CORE_CHAINCODE_STARTUPTIMEOUT=120s
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.authenticator.com/peers/peer0.org2.authenticator.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.authenticator.com/peers/peer0.org2.authenticator.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.authenticator.com/peers/peer0.org2.authenticator.com/tls/ca.crt
+      - GRPC_TRACE=all=true
+      - GRPC_VERBOSITY=debug
+    volumes:
+      - ./crypto-config/peerOrganizations/org2.authenticator.com:/etc/hyperledger/msp
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    depends_on:
+      - orderer.authenticator.com
+      - peer0.org2.authenticator.com
+    networks:
+      - authenticator
+
+  cli1.Org2:
+    extends:
+      file: ./cli.yaml
+      service: cli
+    container_name: cli1.Org2
+    environment:
+      - CORE_PEER_ID=cli1.org2.authenticator.com
+      - CORE_PEER_ADDRESS=peer1.org2.authenticator.com:7051
+      - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org2.authenticator.com/msp
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer1.org2.authenticator.com:7052
+      - CORE_CHAINCODE_STARTUPTIMEOUT=120s
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.authenticator.com/peers/peer1.org1.authenticator.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.authenticator.com/peers/peer1.org1.authenticator.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.authenticator.com/peers/peer1.org2.authenticator.com/tls/ca.crt
+      - GRPC_TRACE=all=true
+      - GRPC_VERBOSITY=debug
+    volumes:
+      - ./crypto-config/peerOrganizations/org2.authenticator.com:/etc/hyperledger/msp
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    depends_on:
+      - orderer.authenticator.com
+      - peer1.org2.authenticator.com
+    networks:
+      - authenticator
+
+  cli.Auth:
+    extends:
+      file: ./cli.yaml
+      service: cli
+    container_name: cli.Auth
+    environment:
+      - CORE_PEER_ID=cli.Auth.authenticator.com
+      - CORE_PEER_ADDRESS=peer0.Auth.authenticator.com:7051
+      - CORE_PEER_LOCALMSPID=AuthMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@Auth.authenticator.com/msp
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.Auth.authenticator.com:7052
+      - CORE_CHAINCODE_STARTUPTIMEOUT=120s
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Auth.authenticator.com/peers/peer0.Auth.authenticator.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Auth.authenticator.com/peers/peer0.Auth.authenticator.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Auth.authenticator.com/peers/peer0.Auth.authenticator.com/tls/ca.crt
+      - GRPC_TRACE=all=true
+      - GRPC_VERBOSITY=debug
+    volumes:
+      - ./crypto-config/peerOrganizations/Auth.authenticator.com:/etc/hyperledger/msp
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    depends_on:
+      - peer0.Auth.authenticator.com
+    networks:
+      - authenticator

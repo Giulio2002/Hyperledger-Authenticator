@@ -1,0 +1,1 @@
+docker exec cli.Auth bash -c "peer chaincode query -C org1 -n AssetAuth -c '{\"Args\":[\"query\",\"B9LAB\"]}' --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/authenticator.com/orderers/orderer.authenticator.com/msp/tlscacerts/tlsca.authenticator.com-cert.pem"
