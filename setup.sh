@@ -1,6 +1,3 @@
-rm crypto-config -rf
-cryptogen generate --config crypto-config.yaml
-
 export FABRIC_CFG_PATH=./
 
 configtxgen -profile authenticatorOrdererGenesis -outputBlock ./orderer/genesis.block

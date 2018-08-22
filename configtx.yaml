@@ -88,4 +88,3 @@ Orderer: &OrdererDefaults
 
 Application: &ApplicationDefaults
     Organizations:
-
