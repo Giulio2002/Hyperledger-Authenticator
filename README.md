@@ -16,6 +16,10 @@
 ## How to run it
 
   ```
+  git clone https://github.com/Giulio2002/Hyperledger-Authenticator
+  mkdir authenticator
+  mv Hyperledger-Authenticator/* authenticator/
+  cd authenticator
   sh bootstrap.sh   # it setup,start and give basic rules to the network
   ```
 ## License
