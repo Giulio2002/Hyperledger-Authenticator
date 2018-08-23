@@ -1,17 +1,17 @@
 # Hyperledger-Authenticator
 
 ## What
-  this is a simple blockchain made with hyperledger fabric that can provide a simple authentication system(username and password).
-  a peer(called from more users) call the register function to sign up a new user to the network.
+  * this is a simple blockchain made with hyperledger fabric that can provide a simple authentication system(username and password).
+  * everyone can use this blockchain to deploy their own authentication system in the network.
+  * a peer(called from more users) call the register function to register a new user to the network.
 ## How to use it
   you have 2 orgs. each org has 2 peers.
 
-  every peers has the chaincode instantiated.
+  every orgs has the chaincode instantiated.
 
-  every peer rapressent a different service because the chaincode
-  of a peer can't communicate with the chaincode on another peer.
+  every org rapressent a different service(for example amazon account authenticatior nd microsoft account authentication).
 
-  you can enroll new peers using fabric-ca.
+  you can enroll new peers or new orgs using fabric-ca.
 
 ## How to run it
 
